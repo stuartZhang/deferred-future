@@ -1,0 +1,27 @@
+[package]
+authors = ["stuart_zhang <stuartpage@qq.com>"]
+categories = ["asynchronous"]
+description = "模仿 jQuery.Deferred()，允许从 Future 实现类实例的外部对正在 pending 的 Future 对象进行 resolve 或 reject 处理。"
+edition = "2021"
+keywords = ["async", "future", "defer"]
+license = "MIT"
+name = "deferred-future"
+# repository = "https://github.com/stuartZhang/wasm-gloo-dom-events"
+version = "0.1.2"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+local = []
+thread = []
+default = ["local", "thread"]
+
+[dependencies]
+futures = "0.3.28"
+
+[dev-dependencies]
+futures = {version = "0.3.28", features = [
+    "executor",
+    "thread-pool"
+]}
+futures-time = "3.0.0"
