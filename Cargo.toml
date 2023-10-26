@@ -6,7 +6,7 @@ edition = "2021"
 keywords = ["async", "future", "defer"]
 license = "MIT"
 name = "deferred-future"
-# repository = "https://github.com/stuartZhang/wasm-gloo-dom-events"
+repository = "https://github.com/stuartZhang/deferred-future"
 version = "0.1.2"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
