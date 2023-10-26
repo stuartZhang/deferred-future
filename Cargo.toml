@@ -7,7 +7,7 @@ keywords = ["async", "future", "defer"]
 license = "MIT"
 name = "deferred-future"
 repository = "https://github.com/stuartZhang/deferred-future"
-version = "0.1.2"
+version = "0.1.3"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
