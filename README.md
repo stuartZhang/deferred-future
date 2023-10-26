@@ -2,38 +2,39 @@
 
 模仿[jQuery.Deferred()](https://api.jquery.com/jQuery.Deferred/)，允许
 
-* 【位置】从`Future`实现类实例外部
+* 【地点】从`Future`实现类实例外部
 * 【时间】异步地
 
-改变当前`Future`对象的`Polling`状态从`Poll::Pending`至`Poll::Ready<T>`。这个痛点是[futures crate](https://docs.rs/futures/0.3.28/futures/future/index.html#functions)没有照顾到的。
+改变当前`Future`对象的`Polling`状态从`Poll::Pending`至`Poll::Ready<T>`。这个痛点是[futures crate](https://docs.rs/futures/0.3.28/futures/future/index.html#functions)**没有**照顾到的。
 
 ## 功能
 
-`deferred-future`包分别针对
+`deferred-future crate`分别针对
 
 * 单线程/`WASM`
 * 多线程
 
-异步程序上下文提供了两套实现代码和两个自定义`cargo feature`：
+提供了两套代码实现和两个自定义`cargo feature`：
 
 |`cargo feature`|`FusedFuture`实现类|运行上下文|
 |---------------|------------------|----------|
 |`local` |`LocalDeferredFuture<T>` |单线程/`WASM`|
 |`thread`|`ThreadDeferredFuture<T>`|多线程|
 
-默认情况下，`local`与`thread`自定义`cargo feature`都是被开启的。为了追求极致的编译时间（短）与输出二进制文件体积（小），屏蔽掉未被使用的模块是非常有帮助的。比如，在`WASM`工程内，
+默认情况下，`local`与`thread`都处于开启状态。为了追求极致的编译时间（短）与输出二进制文件体积（小），屏蔽掉未被使用的模块非常有帮助。比如，在`WASM`工程内，启用【条件编译】和（编译时）“裁剪”依赖包的代码是最明智的：
 
 ```toml
+# 因为 WASM 不支持【操作系统线程】，所以仅只导入单线程方面的代码实现
 deferred-future = {version = "0.1.0", features = ["local"]}
 ```
 
-是最明智的。
+另外，因为`deferred-future crate`选择实现[trait futures::future::FusedFuture](https://docs.rs/futures/0.3.29/futures/future/trait.FusedFuture.html)，而不仅只是来自【标准库】的[std::future::Future](https://doc.rust-lang.org/std/future/trait.Future.html)，所以其对更多“边界情况”提供了良好的容错支持。比如，
 
-另外，因为`deferred-future`包选择实现`futures::future::FusedFuture`，所以更多容错特性被保证提供。比如，重复地`Polling`已经`Poll::Ready(T)`的`Future`实例不会导致`UB`。
+* 重复地`Polling`一个已经`Poll::Ready(T)`的`Future`实例不会导致`U.B.`。
 
 ## 安装
 
-### 开启所有自定义`cargo feature`
+### 不开启【条件编译】
 
 ```shell
 cargo add deferred-future
@@ -55,16 +56,18 @@ cargo add deferred-future --features=local
    3. 泛型类型参数`T`对应于`Future::Output`关联类型 —— 代表了`Future`就绪后输出值的数据类型
       1. 在多线程上下文中，泛型类型参数`T`必须是`Send + Sync`的。
 2. 从`***DeferredFuture<T>`实例抽取出`defer`属性值
-   1. 被用来`Poll::Ready()`当前`FusedFuture`实现类实例的`complete(T)`成员方法就隶属于此`defer`对象。
+   1. 被用来`Wake up`当前`FusedFuture`实现类实例的`complete(T)`成员方法就隶属于此`defer`对象。
    2. 在单线程上下文中，`defer`是`Rc<RefCell<T>>`的引用计数·智能指针
    3. 在多线程上下文中，`defer`是`Arc<Mutex<T>>`的原子加锁引用计数·智能指针
 3. 将`defer`对象克隆后甩到（另）一个异步任务`Task`块中去。
    1. 在异步块内，调用`defer`的`complete(T)`成员方法。
-4. 在当前执行上下文，阻塞等待`***DeferredFuture<T>`实例就绪结束。
-   1. 就单线程而言，当前执行上下文即是“主线程”，和同步阻塞等待于主线程。
-   2. 就多线程而言，当前执行上下文就是“父异步块”，和异步阻塞于上一级异步块。
+   2. 在单线程上下文中，`defer`对象需被**可修改**借入。
+   3. 在多线程上下文中，需要先成功地获取线程同步锁。
+4. 在当前执行上下文，阻塞等待`***DeferredFuture<T>`实例就绪结束和返回结果。
+   1. 就单线程而言，当前执行上下文即是“主线程”，和**同步**阻塞主线程。
+   2. 就多线程而言，当前执行上下文就是“父异步块”，和**异步**阻塞上一级异步块。
 
-下面仔细看代码例程，和特别留意注释说明。
+下面仔细看代码例程。请特别留意注释说明。
 
 ### 单线程
 
