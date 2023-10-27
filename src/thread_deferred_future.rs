@@ -16,18 +16,18 @@ where T: Send + Sync {
 }
 #[derive(Default)]
 pub struct ThreadDeferredFuture<T>
-    where T: Send + Sync {
+where T: Send + Sync {
     is_terminated: Cell<bool>,
     shared_state: Arc<Mutex<ThreadSharedState<T>>>
 }
 impl<T> ThreadDeferredFuture<T>
-    where T: Send + Sync {
+where T: Send + Sync {
     pub fn defer(&self) -> Arc<Mutex<ThreadSharedState<T>>> {
         Arc::clone(&self.shared_state)
     }
 }
 impl<T> Future for ThreadDeferredFuture<T>
-    where T: Send + Sync {
+where T: Send + Sync {
     type Output = T;
     fn poll(self: Pin<&mut Self>, context: &mut Context<'_>) -> Poll<Self::Output> {
         let current_waker = context.waker();
