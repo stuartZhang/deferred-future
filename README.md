@@ -5,7 +5,7 @@
 * 【地点】从`Future`实现类实例外部
 * 【时间】异步地
 
-改变当前`Future`对象的`Polling`状态从`Poll::Pending`至`Poll::Ready<T>`。这个痛点是[futures crate](https://docs.rs/futures/0.3.28/futures/future/index.html#functions)**没有**照顾到的。
+改变当前`Future`对象的`Polling`状态从`Poll::Pending`至`Poll::Ready<T>`。这个痛点是[futures crate](https://docs.rs/futures/0.3.28/futures/future/index.html#functions)都**没有**照顾到的。
 
 ## 功能
 
@@ -21,10 +21,10 @@
 |`local` |`LocalDeferredFuture<T>` |单线程/`WASM`|
 |`thread`|`ThreadDeferredFuture<T>`|多线程|
 
-默认情况下，`local`与`thread`都处于开启状态。为了追求极致的编译时间（短）与输出二进制文件体积（小），屏蔽掉未被使用的模块非常有帮助。比如，在`WASM`工程内，启用【条件编译】和（编译时）“裁剪”依赖包的代码是最明智的：
+默认情况下，`local`与`thread`都处于开启状态。为了追求极致的编译时间（短）与输出二进制文件体积（小），屏蔽掉未被使用的模块非常有帮助。比如，在`WASM`工程内，启用【条件编译】和（编译时）“裁剪”依赖包是最明智的：
 
 ```toml
-# 因为 WASM 不支持【操作系统线程】，所以仅只导入单线程方面的代码实现
+# 因为 WASM 不支持【操作系统线程】，所以仅只导入单线程代码实现
 deferred-future = {version = "0.1.0", features = ["local"]}
 ```
 
@@ -56,14 +56,14 @@ cargo add deferred-future --features=local
    3. 泛型类型参数`T`对应于`Future::Output`关联类型 —— 代表了`Future`就绪后输出值的数据类型
       1. 在多线程上下文中，泛型类型参数`T`必须是`Send + Sync`的。
 2. 从`***DeferredFuture<T>`实例抽取出`defer`属性值
-   1. 被用来`Wake up`当前`FusedFuture`实现类实例的`complete(T)`成员方法就隶属于此`defer`对象。
+   1. 被用来`Wake up`处于`Pending`状态`***DeferredFuture<T>`实例的`complete(T)`成员方法就隶属于此`defer`对象。
    2. 在单线程上下文中，`defer`是`Rc<RefCell<T>>`的引用计数·智能指针
    3. 在多线程上下文中，`defer`是`Arc<Mutex<T>>`的原子加锁引用计数·智能指针
 3. 将`defer`对象克隆后甩到（另）一个异步任务`Task`块中去。
    1. 在异步块内，调用`defer`的`complete(T)`成员方法。
-   2. 在单线程上下文中，`defer`对象需被**可修改**借入。
-   3. 在多线程上下文中，需要先成功地获取线程同步锁。
-4. 在当前执行上下文，阻塞等待`***DeferredFuture<T>`实例就绪结束和返回结果。
+   2. 在单线程上下文中，`defer`对象需被**可修改**借入`defer.borrow_mut()`。
+   3. 在多线程上下文中，需要先成功地获取线程同步锁`defer.lock().unwrap()`。
+4. 在当前执行上下文，阻塞等待`***DeferredFuture<T>`实例就绪和返回结果。
    1. 就单线程而言，当前执行上下文即是“主线程”，和**同步**阻塞主线程。
    2. 就多线程而言，当前执行上下文就是“父异步块”，和**异步**阻塞上一级异步块。
 
