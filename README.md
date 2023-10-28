@@ -135,21 +135,22 @@ block_on(async move {
 
 ```rust
 use ::deferred_future::LocalDeferredFuture;
-use ::wasm_gloo_dom_events::{EventStream, Options};
+use ::futures::future;
+use ::wasm_gloo_dom_events::EventStream;
 // (1) 构造·形似 jQuery.Deferred() 的 trait FusedFuture 实例类实例。
 //     - 注意：泛型类型参数 —— `Future::Output`输出值类型是 u32。
 let deferred_future = LocalDeferredFuture::default();
 // (2) 取出它的 defer 实例。
 let defer = deferred_future.defer();
-// (3) 给按钮 DOM 元素添加一个鼠标单击事件。仅当按钮被单击时，才填入`Future::Output`输出值。
-let _ = EventStream::on(&button, "click", Options::enable_prevent_default(true), move |event| {
-    // (3.1) 在 DOM 事件处理函数内，调用`defer`的`complete(T)`成员方法。
-    defer.borrow_mut().complete(12);
+// (3) 创建一个计划任务。仅当计划任务被执行时，才填入`Future::Output`输出值。
+let _ = EventStream::on_timeout("test", 1000, move |_event| {
+    // (3.1) 在计划任务处理函数内，调用`defer`的`complete(T)`成员方法。
+    defer.borrow_mut().complete("12".to_string());
     future::ready(Ok(()))
 });
-wasm_bindgen_futures::spawn_local(async move {
-    // (4) 异步阻塞当前 Task 等待 #3 的按钮点击事件的发生，和抽取出`Future::Output`输出值。
-    let result = deferred_future.await;
-    console::info!("DeferredFuture异步结果", result);
-});
+// (4) 异步阻塞当前 Task 等待 #3 的按钮点击事件的发生，和抽取出`Future::Output`输出值。
+let result = deferred_future.await;
+assert_eq!(result, "12");
 ```
+
+从命令行，执行命令`wasm-pack test --chrome`可直接运行此例程。

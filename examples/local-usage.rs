@@ -1,8 +1,9 @@
-use ::deferred_future::LocalDeferredFuture;
-use ::futures::{future, executor::LocalPool, task::LocalSpawnExt};
-use ::futures_time::{prelude::*, time::Duration};
-use ::std::time::Instant;
+#[cfg(not(target_arch = "wasm32"))]
 fn main() {
+    use ::deferred_future::LocalDeferredFuture;
+    use ::futures::{future, executor::LocalPool, task::LocalSpawnExt};
+    use ::futures_time::{prelude::*, time::Duration};
+    use ::std::time::Instant;
     let deferred_future = LocalDeferredFuture::default();
     let defer = deferred_future.defer();
     let mut executor = LocalPool::new();
@@ -16,3 +17,5 @@ fn main() {
     let elapse = end.duration_since(start).as_secs();
     println!("为了收到消息<{}>，主协程先后等待了 {} 秒", message, elapse);
 }
+#[cfg(target_arch = "wasm32")]
+fn main() {}

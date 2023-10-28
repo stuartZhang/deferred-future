@@ -1,8 +1,9 @@
-use ::deferred_future::ThreadDeferredFuture;
-use ::futures::{future, executor::{block_on, ThreadPool}, task::SpawnExt};
-use ::futures_time::{prelude::*, time::Duration};
-use ::std::{error::Error, sync::PoisonError, time::Instant};
-fn main() -> Result<(), Box<dyn Error>> {
+#[cfg(not(target_arch = "wasm32"))]
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    use ::deferred_future::ThreadDeferredFuture;
+    use ::futures::{future, executor::{block_on, ThreadPool}, task::SpawnExt};
+    use ::futures_time::{prelude::*, time::Duration};
+    use ::std::{sync::PoisonError, time::Instant};
     block_on(async move {
         let deferred_future = ThreadDeferredFuture::default();
         let defer = deferred_future.defer();
@@ -19,3 +20,5 @@ fn main() -> Result<(), Box<dyn Error>> {
         Ok(())
     })
 }
+#[cfg(target_arch = "wasm32")]
+fn main() {}

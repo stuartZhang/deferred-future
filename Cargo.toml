@@ -19,7 +19,12 @@ default = ["local", "thread"]
 [dependencies]
 futures = "0.3.28"
 
-[dev-dependencies]
+[target.'cfg(target_arch = "wasm32")'.dev-dependencies]
+futures = "0.3.28"
+wasm-bindgen-test = "0.3.28"
+wasm-gloo-dom-events = "0.1.2"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 futures = {version = "0.3.28", features = [
     "executor",
     "thread-pool"
