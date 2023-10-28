@@ -4,7 +4,7 @@ use ::futures_time::{prelude::*, time::Duration};
 use ::std::{error::Error, sync::PoisonError, time::Instant};
 fn main() -> Result<(), Box<dyn Error>> {
     block_on(async move {
-        let deferred_future: ThreadDeferredFuture<String> = ThreadDeferredFuture::default();
+        let deferred_future = ThreadDeferredFuture::default();
         let defer = deferred_future.defer();
         ThreadPool::new()?.spawn(async move {
             future::ready(()).delay(Duration::from_secs(1_u64)).await;

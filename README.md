@@ -78,7 +78,7 @@ use ::futures_time::{prelude::*, time::Duration};
 use ::std::time::Instant;
 // (1) 构造·形似 jQuery.Deferred() 的 trait FusedFuture 实现例类实例。
 //     - 注意：泛型类型参数 —— `Future::Output`输出值类型是字符串。
-let deferred_future: LocalDeferredFuture<String> = LocalDeferredFuture::default();
+let deferred_future = LocalDeferredFuture::default();
 // (2) 取出它的 defer 实例。
 let defer = deferred_future.defer();
 // (3) 发起一个异步任务。在 2 秒钟后，填入`Future::Output`输出值。
@@ -109,7 +109,7 @@ block_on(async move {
     // (1) 构造·形似 jQuery.Deferred() 的 trait FusedFuture 实现类实例。
     //     - 注意：泛型类型参数 —— `Future::Output`输出值类型是字符串。
     //     - String 是 Send + Sync 的数据类型，和支持跨线程传递的。
-    let deferred_future: ThreadDeferredFuture<String> = ThreadDeferredFuture::default();
+    let deferred_future = ThreadDeferredFuture::default();
     // (2) 取出它的 defer 实例。
     let defer = deferred_future.defer();
     // (3) 发起一个异步任务。在 1 秒钟后，填入`Future::Output`输出值。
@@ -138,7 +138,7 @@ use ::deferred_future::LocalDeferredFuture;
 use ::wasm_gloo_dom_events::{EventStream, Options};
 // (1) 构造·形似 jQuery.Deferred() 的 trait FusedFuture 实例类实例。
 //     - 注意：泛型类型参数 —— `Future::Output`输出值类型是 u32。
-let deferred_future: LocalDeferredFuture<u32> = LocalDeferredFuture::default();
+let deferred_future = LocalDeferredFuture::default();
 // (2) 取出它的 defer 实例。
 let defer = deferred_future.defer();
 // (3) 给按钮 DOM 元素添加一个鼠标单击事件。仅当按钮被单击时，才填入`Future::Output`输出值。

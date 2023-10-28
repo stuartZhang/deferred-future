@@ -3,7 +3,7 @@ use ::futures::{future, executor::LocalPool, task::LocalSpawnExt};
 use ::futures_time::{prelude::*, time::Duration};
 use ::std::time::Instant;
 fn main() {
-    let deferred_future: LocalDeferredFuture<String> = LocalDeferredFuture::default();
+    let deferred_future = LocalDeferredFuture::default();
     let defer = deferred_future.defer();
     let mut executor = LocalPool::new();
     executor.spawner().spawn_local(async move {
