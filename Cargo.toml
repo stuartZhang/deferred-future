@@ -33,4 +33,4 @@ futures = {version = "0.3.28", features = [
 futures-time = "3.0.0"
 
 [patch.crates-io]
-wasm-gloo-dom-events = { path = "C:\\Users\\stuar\\github_projects\\dom_events" }
+# wasm-gloo-dom-events = { path = "C:\\Users\\stuar\\github_projects\\dom_events" }
