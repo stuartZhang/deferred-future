@@ -131,8 +131,16 @@
             "command": "wasm-pack",
             "args": [
                 "test",
-                "--chrome"
+                "--chrome",
+                "--headless",
+                // 从这(https://googlechromelabs.github.io/chrome-for-testing/)下载与本地 Chrome 版本匹配的 chrome_driver。
+                "--chromedriver=${env:LOCALAPPDATA}/Programs/chromedriver-118.0.5993.exe"
             ],
+            "options": {
+                "env": {
+                    "RUST_LOG": "wasm_bindgen_test_runner"
+                }
+            },
             "presentation": {
                 "echo": true,
                 "reveal": "always",
