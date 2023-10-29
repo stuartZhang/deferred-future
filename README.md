@@ -169,4 +169,6 @@ wasm-pack test --chrome --headless --chromedriver=<chromedriver可执行文件�
 * `webdriver`与
 * `Chrome`
 
-版本匹配。否则，就会收到`"error":"invalid session id"`的反馈。查看详细日志就会发现这么一条`DEBUG`日志`"message":"session not created: This version of ChromeDriver only supports Chrome version 114\nCurrent browser version is 118.0.5993.118 with binary path`。可从这[下载](https://googlechromelabs.github.io/chrome-for-testing/)最新版的`ChromeDriver`。
+版本匹配。否则，就会收到`"error":"invalid session id"`的反馈。查看详细日志就会发现这么一条`DEBUG`日志`"message":"session not created: This version of ChromeDriver only supports Chrome version 114\nCurrent browser version is 118.0.5993.118 with binary path`。
+
+最后，可从这[下载](https://googlechromelabs.github.io/chrome-for-testing/)最新版的`ChromeDriver`。
