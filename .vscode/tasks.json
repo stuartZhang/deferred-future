@@ -127,11 +127,32 @@
             "problemMatcher": {}
         },
         {
-            "label": "wasm-test",
+            "label": "wasm-browser-test",
             "command": "wasm-pack",
             "args": [
                 "test",
                 "--chrome"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "isBackground": true,
+            "problemMatcher": {}
+        },
+        {
+            "label": "wasm-nodejs-test",
+            "command": "wasm-pack",
+            "args": [
+                "test",
+                "--node",
+                "--features=nodejs"
             ],
             "presentation": {
                 "echo": true,
