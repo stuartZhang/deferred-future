@@ -154,3 +154,19 @@ assert_eq!(result, "12");
 ```
 
 从命令行，执行命令`wasm-pack test --chrome`可直接运行此例程。
+
+#### "无头"运行模式
+
+```shell
+# 开启详细日志
+set RUST_LOG=wasm_bindgen_test_runner
+# 运行 webdriver
+wasm-pack test --chrome --headless
+```
+
+注意：需要本地安装的
+
+* `webdriver`与
+* `Chrome`
+
+版本匹配。否则，就会收到`"error":"invalid session id"`的反馈。查看详细日志就会发现这么一条`DEBUG`日志`"message":"session not created: This version of ChromeDriver only supports Chrome version 114\nCurrent browser version is 118.0.5993.118 with binary path`。

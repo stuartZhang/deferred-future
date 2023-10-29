@@ -22,7 +22,7 @@ futures = "0.3.28"
 
 [target.'cfg(target_arch = "wasm32")'.dev-dependencies]
 futures = "0.3.28"
-wasm-bindgen-test = "0.3.28"
+wasm-bindgen-test = "0.3.37"
 wasm-gloo-dom-events = "0.1.3"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
@@ -33,4 +33,4 @@ futures = {version = "0.3.28", features = [
 futures-time = "3.0.0"
 
 [patch.crates-io]
-# wasm-gloo-dom-events = { path = "C:\\Users\\stuar\\github_projects\\dom_events" }
+wasm-gloo-dom-events = { path = "C:\\Users\\stuar\\github_projects\\dom_events" }
