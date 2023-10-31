@@ -3,7 +3,7 @@
     // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
-        {
+        { // cargo check
             "label": "check",
             "command": "cargo",
             "args": [
@@ -43,7 +43,7 @@
                 }]
             }
         },
-        {
+        { // cargo fix
             "label": "fix",
             "command": "cargo",
             "args": [
@@ -86,6 +86,62 @@
                 }]
             }
         },
+        { // cargo build
+            "label": "build",
+            "command": "cargo",
+            "args": [
+                "build"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "isBackground": true,
+            "problemMatcher": {}
+        },
+        { // cargo clean
+            "label": "cargo clean",
+            "hide": true,
+            "command": "cargo",
+            "args": [
+                "clean"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "isBackground": true,
+            "problemMatcher": {}
+        },
+        { // wasm-pack test
+            "label": "wasm-test",
+            "type": "shell",
+            "command": "wasm-pack test ${input:target} ${input:headless} ${input:test}",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "isBackground": true,
+            "problemMatcher": {}
+        },
         {
             "label": "native-example",
             "command": "cargo",
@@ -106,94 +162,36 @@
             },
             "isBackground": true,
             "problemMatcher": {}
-        },
-        {
-            "label": "build",
-            "command": "cargo",
-            "args": [
-                "build"
-            ],
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "isBackground": true,
-            "problemMatcher": {}
-        },
-        {
-            "label": "wasm-browser-test",
-            "command": "wasm-pack",
-            "args": [
-                "test",
-                "--chrome",
-                "--headless",
-                // 从这(https://googlechromelabs.github.io/chrome-for-testing/)下载与本地 Chrome 版本匹配的 chrome_driver。
-                "--chromedriver=${env:LOCALAPPDATA}/Programs/chromedriver-118.0.5993.exe"
-            ],
-            "options": {
-                "env": {
-                    "RUST_LOG": "wasm_bindgen_test_runner"
-                }
-            },
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "isBackground": true,
-            "problemMatcher": {}
-        },
-        {
-            "label": "wasm-nodejs-test",
-            "command": "wasm-pack",
-            "args": [
-                "test",
-                "--node",
-                "--features=nodejs"
-            ],
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "isBackground": true,
-            "problemMatcher": {}
-        },
-        {
-            "label": "cargo clean",
-            "hide": true,
-            "command": "cargo",
-            "args": [
-                "clean"
-            ],
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "isBackground": true,
-            "problemMatcher": {}
-        },
-    ]
+        }
+    ],
+    "inputs": [{
+        "type": "pickString",
+        "id": "headless",
+        "description": "是否无头运行",
+        "options": [
+          "--headless",
+          ""
+        ],
+        "default": "--headless"
+      }, {
+        "type": "pickString",
+        "id": "target",
+        "description": "运行环境",
+        "options": [
+            "--node --features=nodejs",
+            // 从这(https://googlechromelabs.github.io/chrome-for-testing/)下载与本地 Chrome 版本匹配的 chrome_driver。
+            "--chrome --chromedriver \"${env:LOCALAPPDATA}/Programs/chromedriver-118.0.5993.exe\"",
+            "--firefox",
+            "--safari"
+        ],
+        "default": "--chrome --chromedriver \"${env:LOCALAPPDATA}/Programs/chromedriver-118.0.5993.exe\""
+    }, {
+        "type": "pickString",
+        "id": "test",
+        "description": "测试单元",
+        "options": [
+            "--test=wasm-usage"
+        ],
+        "default": "--test=examples"
+    }]
 }

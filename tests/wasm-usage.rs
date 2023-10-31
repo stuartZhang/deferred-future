@@ -11,10 +11,11 @@ async fn deferred_future_test() {
     use ::wasm_gloo_dom_events::EventStream;
     let deferred_future = LocalDeferredFuture::default();
     let defer = deferred_future.defer();
-    let _ = EventStream::on_timeout("test", 1000, move |_event| {
+    let off = EventStream::on_timeout("test".to_string(), 1000, move |_event| {
         defer.borrow_mut().complete("12".to_string());
         future::ready(Ok(()))
     });
     let result = deferred_future.await;
     assert_eq!(result, "12");
+    off();
 }
