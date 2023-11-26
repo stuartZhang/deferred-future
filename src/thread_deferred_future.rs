@@ -14,7 +14,6 @@ where T: Send + Sync {
         self.waker.take().map(|waker| {waker.wake()});
     }
 }
-#[derive(Default)]
 pub struct ThreadDeferredFuture<T>
 where T: Send + Sync {
     is_terminated: Cell<bool>,
@@ -24,6 +23,18 @@ impl<T> ThreadDeferredFuture<T>
 where T: Send + Sync {
     pub fn defer(&self) -> Arc<Mutex<ThreadSharedState<T>>> {
         Arc::clone(&self.shared_state)
+    }
+}
+impl<T> Default for ThreadDeferredFuture<T>
+where T: Send + Sync {
+    fn default() -> Self {
+        Self {
+            is_terminated: Cell::new(false),
+            shared_state: Arc::new(Mutex::new(ThreadSharedState {
+                data: None,
+                waker: None
+            }))
+        }
     }
 }
 impl<T> Future for ThreadDeferredFuture<T>

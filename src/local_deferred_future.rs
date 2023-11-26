@@ -12,7 +12,6 @@ impl<T> LocalSharedState<T> {
         self.waker.take().map(|waker| {waker.wake()});
     }
 }
-#[derive(Default)]
 pub struct LocalDeferredFuture<T> {
     is_terminated: Cell<bool>,
     shared_state: Rc<RefCell<LocalSharedState<T>>>
@@ -20,6 +19,17 @@ pub struct LocalDeferredFuture<T> {
 impl<T> LocalDeferredFuture<T> {
     pub fn defer(&self) -> Rc<RefCell<LocalSharedState<T>>> {
         Rc::clone(&self.shared_state)
+    }
+}
+impl<T> Default for LocalDeferredFuture<T> {
+    fn default() -> Self {
+        Self {
+            is_terminated: Cell::new(false),
+            shared_state: Rc::new(RefCell::new(LocalSharedState {
+                data: None,
+                waker: None
+            }))
+        }
     }
 }
 impl<T> Future for LocalDeferredFuture<T> {
